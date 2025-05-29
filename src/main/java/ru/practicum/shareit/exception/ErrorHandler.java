@@ -32,4 +32,10 @@ public class ErrorHandler {
     public ErrorResponse handleNoRightsForUpdateException(final RuntimeException e) {
         return new ErrorResponse("Нет доступа", e.getMessage());
     }
+
+    @ExceptionHandler(Throwable.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleThrowable(final Throwable e) {
+        return new ErrorResponse("Внутренняя ошибка сервера 500", e.getMessage());
+    }
 }

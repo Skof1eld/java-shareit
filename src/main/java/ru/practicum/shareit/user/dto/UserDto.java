@@ -1,18 +1,17 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.user.dto;
 
+import jakarta.validation.constraints.Email;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.shareit.user.model.User;
 
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Item {
+public class UserDto {
     Long id;
-    User owner;
     String name;
-    String description;
-    Boolean available;
+    @Email
+    String email;
 }

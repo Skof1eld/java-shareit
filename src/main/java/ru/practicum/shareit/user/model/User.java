@@ -1,18 +1,21 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.user.model;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.shareit.user.model.User;
 
 @Data
 @Builder
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Item {
+public class User {
     Long id;
-    User owner;
     String name;
-    String description;
-    Boolean available;
+    String email;
+
+    public User(Long id) {
+        this.id = id;
+    }
 }

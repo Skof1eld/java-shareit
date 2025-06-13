@@ -38,4 +38,10 @@ public class ErrorHandler {
     public ErrorResponse handleThrowable(final Throwable e) {
         return new ErrorResponse("Внутренняя ошибка сервера 500", e.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBadRequestError(final BadRequestException e) {
+        return new ErrorResponse("Некорректный запрос", e.getMessage());
+    }
 }

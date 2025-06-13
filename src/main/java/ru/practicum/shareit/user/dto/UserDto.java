@@ -12,6 +12,6 @@ import lombok.experimental.FieldDefaults;
 public class UserDto {
     Long id;
     String name;
-    @Email
+    @Email(message = "Некорректный формат email")
     String email;
 }

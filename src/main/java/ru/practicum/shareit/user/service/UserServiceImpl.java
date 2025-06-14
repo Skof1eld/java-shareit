@@ -13,6 +13,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,20 +32,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserById(Long userId) {
-        User user = userRepository.getUserById(userId);
+        Optional<User> user = userRepository.findById(userId);
         if (user == null) {
             throw new NotFoundException("Пользователь", userId);
         }
-        return UserMapper.mapToDto(user);
+        return UserMapper.mapToDto(user.get());
     }
 
     @Override
     public UserDto createUser(UserDto userDto) {
         isValidForCreation(userDto);
         isUserWithEmailExist(userDto.getEmail());
-
         User user = UserMapper.mapToEntity(userDto);
-        userDto = UserMapper.mapToDto(userRepository.create(user));
+        userDto = UserMapper.mapToDto(userRepository.save(user));
         log.info("Пользователь с идентификатором {} и почтой {} был создан", user.getId(), user.getEmail());
         return userDto;
     }
@@ -54,19 +54,19 @@ public class UserServiceImpl implements UserService {
         isValidForUpdate(userDto);
         isUserWithEmailExist(userDto.getEmail(), userId);
         userDto.setId(userId);
-        User user = userRepository.getUserById(userDto.getId());
+        Optional<User> user = userRepository.findById(userDto.getId());
         if (userDto.getId() == null || user == null) {
             throw new NotFoundException("Пользователь", userDto.getId());
         }
-        UserMapper.updateEntityFromDto(userDto, user);
-        userDto = UserMapper.mapToDto(userRepository.save(user));
-        log.info("Данные пользователя с идентификатором {} были обновлены", user.getId());
+        UserMapper.updateEntityFromDto(userDto, user.get());
+        userDto = UserMapper.mapToDto(userRepository.save(user.get()));
+        log.info("Данные пользователя с идентификатором {} были обновлены", user.get().getId());
         return userDto;
     }
 
     @Override
     public void deleteUserById(Long userId) {
-        userRepository.deleteUserById(userId);
+        userRepository.deleteById(userId);
     }
 
     private void isValidForCreation(UserDto userDto) {
@@ -93,9 +93,9 @@ public class UserServiceImpl implements UserService {
 
     private void isUserWithEmailExist(String email, Long userId) {
         if (email != null) {
-            User user = userRepository.getUserByEmail(email);
-            if (user != null && !Objects.equals(user.getId(), userId)) {
-                throw new AlreadyExistsException("email", user.getEmail());
+            User existingUser = userRepository.findByEmail(email);
+            if (existingUser != null && !Objects.equals(existingUser.getId(), userId)) {
+                throw new AlreadyExistsException();
             }
         }
     }

@@ -9,13 +9,15 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
+import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@UtilityClass
 public class BookingMapper {
 
-    public static BookingDto mapToBookingDto(Booking booking) {
+    public BookingDto mapToBookingDto(Booking booking) {
         return BookingDto.builder()
                 .id(booking.getId())
                 .booker(UserMapper.mapToDto(booking.getBooker()))
@@ -26,7 +28,7 @@ public class BookingMapper {
                 .build();
     }
 
-    public static ShortBookingDto mapToShortBookingDto(Booking booking) {
+    public ShortBookingDto mapToShortBookingDto(Booking booking) {
         return ShortBookingDto.builder()
                 .id(booking.getId())
                 .bookerId(booking.getBooker().getId())
@@ -37,7 +39,7 @@ public class BookingMapper {
                 .build();
     }
 
-    public static List<BookingDto> mapToBookingDto(Iterable<Booking> bookings) {
+    public List<BookingDto> mapToBookingDto(Iterable<Booking> bookings) {
         List<BookingDto> bookingsDto = new ArrayList<>();
         for (Booking booking : bookings) {
             bookingsDto.add(BookingMapper.mapToBookingDto(booking));
@@ -45,7 +47,7 @@ public class BookingMapper {
         return bookingsDto;
     }
 
-    public static Booking mapToBooking(BookingDto bookingDto, UserDto userDto, ItemDto itemDto) {
+    public Booking mapToBooking(BookingDto bookingDto, UserDto userDto, ItemDto itemDto) {
         return Booking.builder()
                 .id(bookingDto.getId())
                 .booker(UserMapper.mapToEntity(userDto))
@@ -56,7 +58,7 @@ public class BookingMapper {
                 .build();
     }
 
-    public static Booking mapToBooking(NewBookingDto newBookingDto, User booker, Item item) {
+    public Booking mapToBooking(NewBookingDto newBookingDto, User booker, Item item) {
         return Booking.builder()
                 .booker(booker)
                 .item(item)

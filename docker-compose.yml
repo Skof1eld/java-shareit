@@ -6,11 +6,11 @@ services:
     container_name:
       shareit_gateway
     ports:
-      - "9090:9090"
+      - "8080:8080"
     depends_on:
       - server
     environment:
-      - SHAREIT_SERVER_URL=http://server:8080
+      - SHAREIT_SERVER_URL=http://server:9090
 
   server:
     build: ./server
@@ -18,7 +18,7 @@ services:
     container_name:
       shareit_server
     ports:
-      - "8080:8080"
+      - "9090:9090"
     depends_on:
       - db
     environment:
@@ -34,8 +34,14 @@ services:
     container_name:
       shareit_db
     ports:
-      - "6541:5432"
+      - "5432:5432"
     environment:
       - POSTGRES_DB=shareit
       - POSTGRES_USER=dbuser
       - POSTGRES_PASSWORD=12345
+
+  healthcheck:
+    test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+    timeout: 5s
+    interval: 5s
+    retries: 10

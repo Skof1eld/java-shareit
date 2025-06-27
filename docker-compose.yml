@@ -15,8 +15,7 @@ services:
   server:
     build: ./server
     image: java-shareit-server
-    container_name:
-      shareit_server
+    container_name: shareit_server
     ports:
       - "9090:9090"
     depends_on:
@@ -24,8 +23,8 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareit
       - DB_NAME=shareit
-      - POSTGRES_USER=shareitAdm
-      - POSTGRES_PASSWORD=changeme
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=12345
       - DB_HOST=db
       - DB_PORT=5432
 
@@ -37,5 +36,5 @@ services:
       - "6541:5432"
     environment:
       - POSTGRES_DB=shareit
-      - POSTGRES_USER=shareitAdm
-      - POSTGRES_PASSWORD=changeme
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=12345

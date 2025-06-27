@@ -1,36 +1,47 @@
 services:
   gateway:
-    build: ./gateway
-    container_name: gateway
-    ports:
-      - "8080:8080"
-    depends_on:
-      - server
-      - db
-    environment:
-      - SHAREIT_SERVER_URL=http://server:9090
-
-  server:
-    build: ./server
-    container_name: server
+    build: gateway
+    image: shareit-gateway
+    container_name: shareit-gateway
     ports:
       - "9090:9090"
     depends_on:
-      - db
+      server:
+        condition: service_healthy
+    environment:
+      - SHAREIT_SERVER_URL=http://server:8080
+
+  server:
+    build: server
+    image: shareit-server
+    container_name: shareit-server
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareit
+      - SPRING_DATASOURCE_USERNAME=shareit
+      - SPRING_DATASOURCE_PASSWORD=shareit
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   db:
-
-    image: postgres:13.7-alpine
-    container_name: db
+    image: postgres:16.1
+    container_name: postgres
     ports:
       - "5432:5432"
-
-    volumes:
-      - /var/lib/postgresql/data/
-
     environment:
-      - POSTGRES_DB=shareit
-      - POSTGRES_USER=shareit
       - POSTGRES_PASSWORD=shareit
+      - POSTGRES_USER=shareit
+      - POSTGRES_DB=shareit
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+

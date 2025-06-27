@@ -8,8 +8,8 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.NewBookingDto;
 
 import ru.practicum.shareit.exception.BadRequestException;
-import ru.practicum.shareit.exception.ObjectNotFoundException;
-import ru.practicum.shareit.exception.ObjectNotValidException;
+import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
@@ -36,12 +36,15 @@ public class BookingServiceImpl implements BookingService {
         validateBookingPeriod(newBookingDto);
         User booker = doesUserExist(bookerId);
         Item item = itemRepository.getItemById(newBookingDto.getItemId());
+
         if (item == null) {
-            throw new ObjectNotFoundException(newBookingDto.getItemId());
+            throw new NotFoundException(newBookingDto.getItemId());
         }
+
         if (Objects.equals(booker.getId(), item.getOwner().getId())) {
-            throw new ObjectNotFoundException();
+            throw new NotFoundException();
         }
+
         if (!item.getAvailable()) {
             throw new BadRequestException("Предмет недоступен для бронирования");
         }
@@ -55,12 +58,13 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto approveBooking(long bookingId, boolean isApproved, long ownerId) {
         BookingStatus status = isApproved ? BookingStatus.APPROVED : BookingStatus.REJECTED;
         Booking booking = bookingRepository.findByOwnerIdOrBookerId(bookingId, ownerId);
+
         if (booking == null) {
             throw new BadRequestException("Бронирование не найдено");
         } else if (booking.getBooker().getId() == ownerId) {
-            throw new ObjectNotFoundException(bookingId);
+            throw new NotFoundException(bookingId);
         } else if (!booking.getStatus().equals(BookingStatus.WAITING)) {
-            throw new ObjectNotValidException();
+            throw new ValidationException();
         }
         booking.setStatus(status);
 
@@ -71,7 +75,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto findByOwnerIdOrBookerId(long bookingId, long userId) {
         Booking booking = bookingRepository.findByOwnerIdOrBookerId(bookingId, userId);
         if (booking == null) {
-            throw new ObjectNotFoundException(bookingId);
+            throw new NotFoundException(bookingId);
         }
         return BookingMapper.mapToBookingDto(booking);
     }
@@ -148,7 +152,7 @@ public class BookingServiceImpl implements BookingService {
         LocalDateTime start = newBookingDto.getStart();
         LocalDateTime end = newBookingDto.getEnd();
         if (!start.isBefore(end)) {
-            throw new ObjectNotValidException();
+            throw new ValidationException();
         }
     }
 
@@ -168,7 +172,7 @@ public class BookingServiceImpl implements BookingService {
     private User doesUserExist(long userId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
-            throw new ObjectNotFoundException();
+            throw new NotFoundException();
         }
         return user.get();
     }

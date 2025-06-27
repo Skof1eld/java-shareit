@@ -15,14 +15,15 @@ import java.util.List;
 @RequestMapping("/items")
 public class ItemController {
     private final ItemService itemService;
+    private static final String USER_HEADER_ID = "X-Sharer-User-Id";
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@PathVariable Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ItemDto getItemById(@PathVariable Long itemId, @RequestHeader(USER_HEADER_ID) Long userId) {
         return itemService.getItemById(itemId, userId);
     }
 
     @GetMapping
-    public List<ItemDto> findItemsByOwnerId(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public List<ItemDto> findItemsByOwnerId(@RequestHeader(USER_HEADER_ID) Long userId,
                                             @RequestParam(defaultValue = "0") int from,
                                             @RequestParam(defaultValue = "10") int size) {
         return itemService.findItemsByOwnerId(userId, from, size);
@@ -47,8 +48,7 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@PathVariable Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody ItemDto itemDto) {
+    public ItemDto updateItem(@PathVariable Long itemId, @RequestHeader(USER_HEADER_ID) Long userId, @RequestBody ItemDto itemDto) {
         return itemService.updateItem(itemId, userId, itemDto);
     }
-
 }

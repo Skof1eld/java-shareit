@@ -18,8 +18,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class ItemMapper {
-    public static ItemDto mapItemToItemDto(Item item) {
+    public ItemDto mapItemToItemDto(Item item) {
         return ItemDto.builder()
                 .id(item.getId())
                 .ownerId(item.getOwner().getId())
@@ -31,7 +34,7 @@ public class ItemMapper {
     }
 
 
-    public static ItemDto mapToItemDtoWithBookings(Item item, List<Booking> bookings, List<CommentDto> comments) {
+    public ItemDto mapToItemDtoWithBookings(Item item, List<Booking> bookings, List<CommentDto> comments) {
         ShortBookingDto lastBooking = null;
         ShortBookingDto nextBooking = null;
         if (bookings.size() > 1) {
@@ -50,7 +53,7 @@ public class ItemMapper {
                 item.getName(), item.getDescription(), item.getAvailable(), lastBooking, nextBooking, comments);
     }
 
-    public static List<ItemDto> mapToItemDtoWithBookings(List<Item> items, Map<Long,
+    public List<ItemDto> mapToItemDtoWithBookings(List<Item> items, Map<Long,
             List<Booking>> bookings, Map<Long, List<Comment>> comments) {
         return items.stream()
                 .map(i -> ItemMapper.mapToItemDtoWithBookings(i, bookings.getOrDefault(i.getId(), Collections.emptyList()),
@@ -58,7 +61,7 @@ public class ItemMapper {
                 .collect(Collectors.toList());
     }
 
-    public static Item mapItemDtoToItem(ItemDto itemDto, User owner, ItemRequest itemRequest) {
+    public Item mapItemDtoToItem(ItemDto itemDto, User owner, ItemRequest itemRequest) {
         return Item.builder()
                 .id(itemDto.getId())
                 .owner(owner)
@@ -69,7 +72,7 @@ public class ItemMapper {
                 .build();
     }
 
-    public static void mapItemDtoToItemForUpdate(ItemDto itemDto, Item item, User owner) {
+    public void mapItemDtoToItemForUpdate(ItemDto itemDto, Item item, User owner) {
         if (itemDto.getOwnerId() != null) {
             item.setOwner(owner);
         }
@@ -84,7 +87,7 @@ public class ItemMapper {
         }
     }
 
-    public static List<ItemDto> mapToItemDtoRequestInfo(List<Item> items) {
+    public List<ItemDto> mapToItemDtoRequestInfo(List<Item> items) {
         return items.stream()
                 .map(ItemMapper::mapItemToItemDto)
                 .collect(Collectors.toList());

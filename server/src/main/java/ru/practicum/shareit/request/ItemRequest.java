@@ -15,10 +15,10 @@ import java.time.LocalDateTime;
 @Table(name = "requests")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemRequest {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     User requester;

@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemRequestDto {
-
     Long id;
     String description;
     LocalDateTime created;

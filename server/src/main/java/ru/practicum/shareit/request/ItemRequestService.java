@@ -5,11 +5,6 @@ import ru.practicum.shareit.request.dto.ItemRequestDtoWithItems;
 
 import java.util.List;
 
-import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.dto.ItemRequestDtoWithItems;
-
-import java.util.List;
-
 public interface ItemRequestService {
     ItemRequestDto addRequest(ItemRequestDto itemRequestDto, Long userId);
 

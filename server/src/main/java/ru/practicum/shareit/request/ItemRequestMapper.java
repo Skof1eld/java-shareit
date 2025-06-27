@@ -2,7 +2,6 @@ package ru.practicum.shareit.request;
 
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoWithItems;
 import ru.practicum.shareit.user.model.User;
@@ -13,8 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class ItemRequestMapper {
-    public static ItemRequest mapToItemRequest(ItemRequestDto itemRequestDto, User user) {
+    public ItemRequest mapToItemRequest(ItemRequestDto itemRequestDto, User user) {
         return ItemRequest.builder()
                 .description(itemRequestDto.getDescription())
                 .requester(user)
@@ -23,7 +25,7 @@ public class ItemRequestMapper {
 
     }
 
-    public static List<ItemRequestDtoWithItems> mapToItemRequestDto(List<ItemRequest> itemRequests, Map<Long, List<Item>> items) {
+    public List<ItemRequestDtoWithItems> mapToItemRequestDto(List<ItemRequest> itemRequests, Map<Long, List<Item>> items) {
         return itemRequests.stream()
                 .map(req ->
                         ItemRequestMapper.mapToItemRequestDto(req, items.getOrDefault(req.getId(), Collections.emptyList())))
@@ -31,11 +33,11 @@ public class ItemRequestMapper {
 
     }
 
-    public static ItemRequestDtoWithItems mapToItemRequestDto(ItemRequest itemRequest) {
+    public ItemRequestDtoWithItems mapToItemRequestDto(ItemRequest itemRequest) {
         return mapToItemRequestDto(itemRequest, Collections.emptyList());
     }
 
-    public static ItemRequestDtoWithItems mapToItemRequestDto(ItemRequest itemRequest, List<Item> items) {
+    public ItemRequestDtoWithItems mapToItemRequestDto(ItemRequest itemRequest, List<Item> items) {
         ItemRequestDtoWithItems itemRequestDto = new ItemRequestDtoWithItems();
         itemRequestDto.setId(itemRequest.getId());
         itemRequestDto.setDescription(itemRequest.getDescription());

@@ -6,7 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.exception.ObjectNotFoundException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -32,17 +32,17 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Transactional
     public ItemRequestDto addRequest(ItemRequestDto itemRequestDto, Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(ObjectNotFoundException::new);
+                .orElseThrow(NotFoundException::new);
         ItemRequest itemRequest = requestRepository.save(ItemRequestMapper.mapToItemRequest(itemRequestDto, user));
         return ItemRequestMapper.mapToItemRequestDto(itemRequest);
     }
 
     @Override
     public List<ItemRequestDtoWithItems> findAll(Long userId) {
-        userRepository.findById(userId)
-                .orElseThrow(ObjectNotFoundException::new);
+        userRepository.findById(userId).orElseThrow(NotFoundException::new);
         Sort sort = Sort.by("created").descending();
         List<ItemRequest> itemRequests = requestRepository.findByRequesterId(userId, sort);
+
         Map<Long, List<Item>> items = itemRepository.findByRequestIdIn(itemRequests.stream()
                         .map(ItemRequest::getId)
                         .collect(Collectors.toSet()))
@@ -53,12 +53,11 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDtoWithItems> findAll(Long userId, int from, int size) {
-        userRepository.findById(userId)
-                .orElseThrow(ObjectNotFoundException::new);
+        userRepository.findById(userId).orElseThrow(NotFoundException::new);
         List<ItemRequest> itemRequests;
         PageRequest page = PageRequest.of(from / size, size, Sort.by("created").descending());
-        itemRequests = requestRepository.findByRequesterIdNot(userId, page)
-                .getContent();
+        itemRequests = requestRepository.findByRequesterIdNot(userId, page).getContent();
+
         Map<Long, List<Item>> items = itemRepository.findByRequestIdIn(itemRequests.stream()
                         .map(ItemRequest::getId)
                         .collect(Collectors.toSet()))
@@ -69,10 +68,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public ItemRequestDto findById(Long userId, Long requestId) {
-        userRepository.findById(userId)
-                .orElseThrow(ObjectNotFoundException::new);
-        ItemRequest itemRequest = requestRepository.findById(requestId)
-                .orElseThrow(ObjectNotFoundException::new);
+        userRepository.findById(userId).orElseThrow(NotFoundException::new);
+        ItemRequest itemRequest = requestRepository.findById(requestId).orElseThrow(NotFoundException::new);
         List<Item> items = itemRepository.findByRequestIdIn(Set.of(requestId));
         return ItemRequestMapper.mapToItemRequestDto(itemRequest, items);
     }

@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exception.ObjectNotValidException;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.comments.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
@@ -20,14 +20,17 @@ import ru.practicum.shareit.item.dto.ItemDto;
 @RequestMapping("/items")
 public class ItemController {
     private final ItemClient client;
+    private static final String USER_HEADER_ID = "X-Sharer-User-Id";
+
 
     @GetMapping("/{itemId}")
-    public ResponseEntity<Object> getItemById(@PathVariable Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ResponseEntity<Object> getItemById(@PathVariable Long itemId,
+                                              @RequestHeader(USER_HEADER_ID) Long userId) {
         return client.getItemById(itemId, userId);
     }
 
     @GetMapping
-    public ResponseEntity<Object> findItemsByOwnerId(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ResponseEntity<Object> findItemsByOwnerId(@RequestHeader(USER_HEADER_ID) Long userId,
                                                      @PositiveOrZero @RequestParam(defaultValue = "0") int from,
                                                      @Positive @RequestParam(defaultValue = "10") int size) {
         return client.findItemsByOwnerId(userId, from, size);
@@ -41,20 +44,24 @@ public class ItemController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> addItem(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody @Valid ItemDto itemDto) {
+    public ResponseEntity<Object> addItem(@RequestHeader(USER_HEADER_ID) Long userId,
+                                          @RequestBody @Valid ItemDto itemDto) {
         isValidForCreation(itemDto);
         return client.addItem(userId, itemDto);
     }
 
     @PostMapping("/{itemId}/comment")
     @Cacheable
-    public ResponseEntity<Object> addComment(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody @Valid CommentDto commentDto,
+    public ResponseEntity<Object> addComment(@RequestHeader(USER_HEADER_ID) Long userId,
+                                             @RequestBody @Valid CommentDto commentDto,
                                              @PathVariable long itemId) {
         return client.addComment(userId, commentDto, itemId);
     }
 
     @PatchMapping("/{itemId}")
-    public ResponseEntity<Object> updateItem(@PathVariable Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody ItemDto itemDto) {
+    public ResponseEntity<Object> updateItem(@PathVariable Long itemId,
+                                             @RequestHeader(USER_HEADER_ID) Long userId,
+                                             @RequestBody ItemDto itemDto) {
         isValidForUpdate(itemDto);
         return client.updateItem(itemId, userId, itemDto);
     }
@@ -65,7 +72,7 @@ public class ItemController {
                 || itemDto.getDescription() == null
                 || itemDto.getDescription().isEmpty()
                 || itemDto.getAvailable() == null) {
-            throw new ObjectNotValidException();
+            throw new ValidationException();
         }
     }
 
@@ -74,7 +81,7 @@ public class ItemController {
                 && itemDto.getName().isEmpty()
                 || itemDto.getDescription() != null
                 && itemDto.getDescription().isEmpty()) {
-            throw new ObjectNotValidException();
+            throw new ValidationException();
         }
     }
 }

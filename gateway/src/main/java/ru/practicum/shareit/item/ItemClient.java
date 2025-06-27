@@ -32,19 +32,12 @@ public class ItemClient extends BaseClient {
     }
 
     public ResponseEntity<Object> findItemsByOwnerId(Long userId, int from, int size) {
-        Map<String, Object> parameters = Map.of(
-                "from", from,
-                "size", size
-        );
+        Map<String, Object> parameters = Map.of("from", from, "size", size);
         return get("?from={from}&size={size}", userId, parameters);
     }
 
     public ResponseEntity<Object> searchItemsByPhrase(String searchPhrase, int from, int size) {
-        Map<String, Object> parameters = Map.of(
-                "text", searchPhrase,
-                "from", from,
-                "size", size
-        );
+        Map<String, Object> parameters = Map.of("text", searchPhrase, "from", from, "size", size);
         return get("/search?text={text}&from={from}&size={size}", null, parameters);
     }
 

@@ -17,9 +17,11 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     User owner;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "request_id")
     ItemRequest request;

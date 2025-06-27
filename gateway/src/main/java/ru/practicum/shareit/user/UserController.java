@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exception.ObjectNotValidException;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
 
 @Controller
@@ -54,7 +54,7 @@ public class UserController {
                 && userDto.getEmail().isEmpty()
                 || userDto.getName() != null
                 && userDto.getName().isEmpty()) {
-            throw new ObjectNotValidException();
+            throw new ValidationException();
         }
     }
 }

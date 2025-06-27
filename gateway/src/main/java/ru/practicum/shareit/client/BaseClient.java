@@ -105,13 +105,11 @@ public class BaseClient {
         if (response.getStatusCode().is2xxSuccessful()) {
             return response;
         }
-
         ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(response.getStatusCode());
 
         if (response.hasBody()) {
             return responseBuilder.body(response.getBody());
         }
-
         return responseBuilder.build();
     }
 }

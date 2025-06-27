@@ -11,7 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.booking.dto.NewBookingDto;
-import ru.practicum.shareit.exception.ObjectNotValidException;
+import ru.practicum.shareit.exception.ValidationException;
 
 import java.time.LocalDateTime;
 
@@ -22,26 +22,28 @@ import java.time.LocalDateTime;
 @Validated
 public class BookingController {
     private final BookingClient bookingClient;
+    private static final String USER_HEADER_ID = "X-Sharer-User-Id";
 
     @PostMapping
-    public ResponseEntity<Object> addBooking(@RequestBody @Valid NewBookingDto newBookingDto, @RequestHeader("X-Sharer-User-Id") Long bookerId) {
+    public ResponseEntity<Object> addBooking(@RequestBody @Valid NewBookingDto newBookingDto,
+                                             @RequestHeader(USER_HEADER_ID) Long bookerId) {
         validateBookingPeriod(newBookingDto);
         return bookingClient.addBooking(newBookingDto, bookerId);
     }
 
     @PatchMapping("/{bookingId}")
     public ResponseEntity<Object> approveBooking(@PathVariable long bookingId, @RequestParam boolean approved,
-                                                 @RequestHeader("X-Sharer-User-Id") Long ownerId) {
+                                                 @RequestHeader(USER_HEADER_ID) Long ownerId) {
         return bookingClient.approveBooking(bookingId, approved, ownerId);
     }
 
     @GetMapping("/{bookingId}")
-    public ResponseEntity<Object> getBookingInfo(@PathVariable long bookingId, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ResponseEntity<Object> getBookingInfo(@PathVariable long bookingId, @RequestHeader(USER_HEADER_ID) Long userId) {
         return bookingClient.getBookingInfo(bookingId, userId);
     }
 
     @GetMapping
-    public ResponseEntity<Object> getBookerBookings(@RequestHeader("X-Sharer-User-Id") Long bookerId,
+    public ResponseEntity<Object> getBookerBookings(@RequestHeader(USER_HEADER_ID) Long bookerId,
                                                     @RequestParam(name = "state", defaultValue = "ALL") String stateParam,
                                                     @PositiveOrZero @RequestParam(defaultValue = "0") int from,
                                                     @Positive @RequestParam(defaultValue = "10") int size) {
@@ -51,7 +53,7 @@ public class BookingController {
     }
 
     @GetMapping("/owner")
-    public ResponseEntity<Object> getOwnerBookings(@RequestHeader("X-Sharer-User-Id") Long ownerId,
+    public ResponseEntity<Object> getOwnerBookings(@RequestHeader(USER_HEADER_ID) Long ownerId,
                                                    @RequestParam(name = "state", defaultValue = "ALL") String stateParam,
                                                    @PositiveOrZero @RequestParam(defaultValue = "0") int from,
                                                    @Positive @RequestParam(defaultValue = "10") int size) {
@@ -64,7 +66,7 @@ public class BookingController {
         LocalDateTime start = newBookingDto.getStart();
         LocalDateTime end = newBookingDto.getEnd();
         if (!start.isBefore(end)) {
-            throw new ObjectNotValidException("Дата начала не может быть равна или позже даты конца");
+            throw new ValidationException("Дата начала не может быть равна или позже даты конца");
         }
     }
 }

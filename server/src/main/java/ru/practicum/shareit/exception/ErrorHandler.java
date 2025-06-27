@@ -13,14 +13,14 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @Slf4j
 public class ErrorHandler {
 
-    @ExceptionHandler({ObjectNotFoundException.class})
+    @ExceptionHandler({NotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleObjectNotFound(final RuntimeException e) {
         log.info(e.getMessage(), e);
         return new ErrorResponse("Объект не найден", e.getMessage());
     }
 
-    @ExceptionHandler({ObjectNotValidException.class})
+    @ExceptionHandler({ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleObjectNotValid(final RuntimeException e) {
         log.info(e.getMessage(), e);

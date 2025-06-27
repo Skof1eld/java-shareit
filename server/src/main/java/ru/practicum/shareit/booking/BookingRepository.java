@@ -21,8 +21,8 @@ public interface BookingRepository extends CrudRepository<Booking, Long> {
 
     List<Booking> findByItemIdAndEndAfter(long itemId, LocalDateTime now);
 
-    List<Booking> findByItemIdAndBookerIdAndStatusNotAndEndBefore(long itemId,
-                                                                  long bookerId, BookingStatus status, LocalDateTime now);
+    List<Booking> findByItemIdAndBookerIdAndStatusNotAndEndBefore(long itemId, long bookerId,
+                                                                  BookingStatus status, LocalDateTime now);
 
     @Query("select b " +
             "from Booking b" +
@@ -54,7 +54,7 @@ public interface BookingRepository extends CrudRepository<Booking, Long> {
 
     Iterable<Booking> findAllByBookerIdAndStatusOrderByStartDesc(long bookerId, BookingStatus status);
 
-    Iterable<Booking> findAllByItemOwnerIdOrderByStartDesc(long ownerId); //ALL
+    Iterable<Booking> findAllByItemOwnerIdOrderByStartDesc(long ownerId);
 
     @Query("select b " +
             "from Booking b " +

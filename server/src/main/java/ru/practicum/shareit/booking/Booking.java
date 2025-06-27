@@ -12,7 +12,6 @@ import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 
-
 @Data
 @Builder
 @AllArgsConstructor
@@ -24,16 +23,21 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booker_id")
     User booker;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     Item item;
+
     @Column(name = "start_date")
     LocalDateTime start;
+
     @Column(name = "end_date")
     LocalDateTime end;
+
     @Enumerated(EnumType.STRING)
     BookingStatus status;
 }

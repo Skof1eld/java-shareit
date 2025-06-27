@@ -13,8 +13,10 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserDto {
     Long id;
+
     @NotBlank(message = "Name не может быть пустым")
     String name;
+
     @NotBlank(message = "Email не может быть пустым")
     String email;
 }

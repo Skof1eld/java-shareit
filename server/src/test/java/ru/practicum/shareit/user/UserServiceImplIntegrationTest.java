@@ -2,7 +2,6 @@ package ru.practicum.shareit.user;
 
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,10 +18,13 @@ import static org.hamcrest.Matchers.*;
 
 @Transactional
 @SpringBootTest(properties = "db.name=test", webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class UserServiceImplIntegrationTest {
-    private final EntityManager em;
-    private final UserService service;
+
+    @Autowired
+    private EntityManager em;
+
+    @Autowired
+    private UserService service;
 
     @Test
     void testGetAllUsers() {

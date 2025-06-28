@@ -22,6 +22,7 @@ public class UserClient extends BaseClient {
                         .requestFactory(() -> new JdkClientHttpRequestFactory())
                         .build()
         );
+        System.out.println(">>>> SERVER_URL = " + serverUrl);
     }
 
     public ResponseEntity<Object> getAllUsers() {

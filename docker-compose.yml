@@ -3,8 +3,7 @@ services:
   gateway:
     build: ./gateway
     image: java-shareit-gateway
-    container_name:
-      shareit_gateway
+    container_name: shareit_gateway
     ports:
       - "8080:8080"
     depends_on:
@@ -15,8 +14,7 @@ services:
   server:
     build: ./server
     image: java-shareit-server
-    container_name:
-      shareit_server
+    container_name: shareit_server
     ports:
       - "9090:9090"
     depends_on:
@@ -31,17 +29,15 @@ services:
 
   db:
     image: postgres:13.7-alpine
-    container_name:
-      shareit_db
+    container_name: shareit_db
     ports:
       - "5432:5432"
     environment:
       - POSTGRES_DB=shareit
       - POSTGRES_USER=dbuser
       - POSTGRES_PASSWORD=12345
-
-  healthcheck:
-    test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
-    timeout: 5s
-    interval: 5s
-    retries: 10
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -q -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10

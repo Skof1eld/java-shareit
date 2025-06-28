@@ -54,4 +54,11 @@ public class ErrorHandler {
         log.info(e.getMessage(), e);
         return new ErrorResponse("Нет доступа", e.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleUnhandledException(final Throwable e) {
+        log.error("Необработанная ошибка: {}", e.getMessage(), e);
+        return new ErrorResponse("Внутренняя ошибка сервера", e.getMessage());
+    }
 }

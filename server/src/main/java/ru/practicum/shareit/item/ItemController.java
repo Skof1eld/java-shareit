@@ -8,7 +8,6 @@ import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.List;
 
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/items")
@@ -36,12 +35,12 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemDto addItem(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody ItemDto itemDto) {
+    public ItemDto addItem(@RequestHeader(USER_HEADER_ID) Long userId, @RequestBody ItemDto itemDto) {
         return itemService.addItem(userId, itemDto);
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody CommentDto commentDto,
+    public CommentDto addComment(@RequestHeader(USER_HEADER_ID) Long userId, @RequestBody CommentDto commentDto,
                                  @PathVariable long itemId) {
         return itemService.addComment(itemId, userId, commentDto);
     }

@@ -410,7 +410,7 @@ public class ItemServiceImplUnitTest {
         Mockito.verify(itemRepository, Mockito.times(1))
                 .getItemById(1L);
 
-        assertThat(exception.getMessage(), equalTo("Не достаточно прав для изменения!"));
+        assertThat(exception.getMessage(), equalTo("У вас нет прав изменять этот объект"));
     }
 
     @Test

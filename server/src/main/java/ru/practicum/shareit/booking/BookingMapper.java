@@ -7,15 +7,14 @@ import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.model.User;
-import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-@UtilityClass
 public class BookingMapper {
 
-    public BookingDto mapToBookingDto(Booking booking) {
+    public static BookingDto mapToBookingDto(Booking booking) {
         return BookingDto.builder()
                 .id(booking.getId())
                 .booker(UserMapper.mapUserToUserDto(booking.getBooker()))
@@ -26,7 +25,7 @@ public class BookingMapper {
                 .build();
     }
 
-    public ShortBookingDto mapToShortBookingDto(Booking booking) {
+    public static ShortBookingDto mapToShortBookingDto(Booking booking) {
         return ShortBookingDto.builder()
                 .id(booking.getId())
                 .bookerId(booking.getBooker().getId())
@@ -37,7 +36,10 @@ public class BookingMapper {
                 .build();
     }
 
-    public List<BookingDto> mapToBookingDto(Iterable<Booking> bookings) {
+    public static List<BookingDto> mapToBookingDto(Iterable<Booking> bookings) {
+        if (bookings == null) {
+            return Collections.emptyList();
+        }
         List<BookingDto> bookingsDto = new ArrayList<>();
         for (Booking booking : bookings) {
             bookingsDto.add(BookingMapper.mapToBookingDto(booking));
@@ -45,7 +47,7 @@ public class BookingMapper {
         return bookingsDto;
     }
 
-    public Booking mapToBooking(NewBookingDto newBookingDto, User booker, Item item) {
+    public static Booking mapToBooking(NewBookingDto newBookingDto, User booker, Item item) {
         return Booking.builder()
                 .booker(booker)
                 .item(item)

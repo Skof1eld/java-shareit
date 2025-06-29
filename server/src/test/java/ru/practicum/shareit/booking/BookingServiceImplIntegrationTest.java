@@ -59,7 +59,7 @@ public class BookingServiceImplIntegrationTest {
         BookingDto addedBooking = bookingService.add(newBookingDto, createdUserTwo.getId());
 
         List<BookingDto> bookings = bookingService.findAllByBookerIdAndBookingState(createdUserTwo.getId(),
-                BookingState.ALL);
+                BookingState.ALL, 0, 10);
 
         assertThat(bookings, hasSize(1));
         assertThat(bookings, hasItem(allOf(

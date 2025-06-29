@@ -12,32 +12,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import lombok.experimental.UtilityClass;
-
-@UtilityClass
 public class ItemRequestMapper {
-    public ItemRequest mapToItemRequest(ItemRequestDto itemRequestDto, User user) {
+    public static ItemRequest mapToItemRequest(ItemRequestDto itemRequestDto, User user) {
         return ItemRequest.builder()
                 .description(itemRequestDto.getDescription())
                 .requester(user)
                 .created(LocalDateTime.now())
                 .build();
-
     }
 
-    public List<ItemRequestDtoWithItems> mapToItemRequestDto(List<ItemRequest> itemRequests, Map<Long, List<Item>> items) {
+    public static List<ItemRequestDtoWithItems> mapToItemRequestDto(List<ItemRequest> itemRequests, Map<Long, List<Item>> items) {
         return itemRequests.stream()
                 .map(req ->
                         ItemRequestMapper.mapToItemRequestDto(req, items.getOrDefault(req.getId(), Collections.emptyList())))
                 .collect(Collectors.toList());
-
     }
 
-    public ItemRequestDtoWithItems mapToItemRequestDto(ItemRequest itemRequest) {
+    public static ItemRequestDtoWithItems mapToItemRequestDto(ItemRequest itemRequest) {
         return mapToItemRequestDto(itemRequest, Collections.emptyList());
     }
 
-    public ItemRequestDtoWithItems mapToItemRequestDto(ItemRequest itemRequest, List<Item> items) {
+    public static ItemRequestDtoWithItems mapToItemRequestDto(ItemRequest itemRequest, List<Item> items) {
         ItemRequestDtoWithItems itemRequestDto = new ItemRequestDtoWithItems();
         itemRequestDto.setId(itemRequest.getId());
         itemRequestDto.setDescription(itemRequest.getDescription());

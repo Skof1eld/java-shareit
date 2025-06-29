@@ -13,18 +13,21 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleTypeMismatchError(final IllegalArgumentException e) {
+        log.warn(e.getMessage());
         return new ErrorResponse(e.getMessage(), "");
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleGeneralError(final Throwable e) {
+        log.warn(e.getMessage());
         return new ErrorResponse(e.getMessage(), "");
     }
 
     @ExceptionHandler({ValidationException.class, MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationError(final Exception e) {
+        log.warn(e.getMessage());
         return new ErrorResponse("Ошибка валидации", e.getMessage());
     }
 }

@@ -25,7 +25,6 @@ public class NewBookingDtoJsonTest {
                 .build();
 
         JsonContent<NewBookingDto> result = json.write(invalidDto);
-
         assertThat(result).extractingJsonPathNumberValue("$.itemId").isNull();
     }
 
@@ -38,7 +37,6 @@ public class NewBookingDtoJsonTest {
                 .build();
 
         JsonContent<NewBookingDto> result = json.write(validDto);
-
         assertThat(result).extractingJsonPathNumberValue("$.itemId").isEqualTo(1);
     }
 }

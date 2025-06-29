@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -16,16 +16,16 @@ import ru.practicum.shareit.item.dto.ItemDto;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 @Validated
 @RequestMapping("/items")
 public class ItemController {
     private final ItemClient client;
     private static final String USER_HEADER_ID = "X-Sharer-User-Id";
 
-
     @GetMapping("/{itemId}")
-    public ResponseEntity<Object> getItemById(@PathVariable Long itemId,
-                                              @RequestHeader(USER_HEADER_ID) Long userId) {
+    public ResponseEntity<Object> getItemById(@PathVariable Long itemId, @RequestHeader(USER_HEADER_ID) Long userId) {
+        log.info("Get item with userId={}, itemId={}", userId, itemId);
         return client.getItemById(itemId, userId);
     }
 
@@ -33,6 +33,7 @@ public class ItemController {
     public ResponseEntity<Object> findItemsByOwnerId(@RequestHeader(USER_HEADER_ID) Long userId,
                                                      @PositiveOrZero @RequestParam(defaultValue = "0") int from,
                                                      @Positive @RequestParam(defaultValue = "10") int size) {
+        log.info("Get items by owner with userId={}, from={}, size={}", userId, from, size);
         return client.findItemsByOwnerId(userId, from, size);
     }
 
@@ -40,13 +41,14 @@ public class ItemController {
     public ResponseEntity<Object> searchItemsByPhrase(@RequestParam("text") String searchPhrase,
                                                       @PositiveOrZero @RequestParam(defaultValue = "0") int from,
                                                       @Positive @RequestParam(defaultValue = "10") int size) {
+        log.info("Get items by phrase with text={}, from={}, size={}", searchPhrase, from, size);
         return client.searchItemsByPhrase(searchPhrase, from, size);
     }
 
     @PostMapping
-    public ResponseEntity<Object> addItem(@RequestHeader(USER_HEADER_ID) Long userId,
-                                          @RequestBody @Valid ItemDto itemDto) {
+    public ResponseEntity<Object> addItem(@RequestHeader(USER_HEADER_ID) Long userId, @RequestBody ItemDto itemDto) {
         isValidForCreation(itemDto);
+        log.info("Add item with userId={}", userId);
         return client.addItem(userId, itemDto);
     }
 
@@ -55,6 +57,7 @@ public class ItemController {
     public ResponseEntity<Object> addComment(@RequestHeader(USER_HEADER_ID) Long userId,
                                              @RequestBody @Valid CommentDto commentDto,
                                              @PathVariable long itemId) {
+        log.info("Add comment to item with userId={}, itemId={}", userId, itemId);
         return client.addComment(userId, commentDto, itemId);
     }
 
@@ -63,6 +66,7 @@ public class ItemController {
                                              @RequestHeader(USER_HEADER_ID) Long userId,
                                              @RequestBody ItemDto itemDto) {
         isValidForUpdate(itemDto);
+        log.info("Patch item with userId={}, itemId={}", userId, itemDto);
         return client.updateItem(itemId, userId, itemDto);
     }
 

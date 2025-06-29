@@ -23,11 +23,13 @@ public class ItemRequestController {
     @PostMapping
     public ResponseEntity<Object> addItemRequest(@RequestBody @Valid ItemRequestDto itemRequestDto,
                                                  @RequestHeader(USER_HEADER_ID) Long userId) {
+        log.info("Add itemRequest with userId={}", userId);
         return client.addItemRequest(itemRequestDto, userId);
     }
 
     @GetMapping
     public ResponseEntity<Object> findAllUserRequests(@RequestHeader(USER_HEADER_ID) Long userId) {
+        log.info("Get itemRequests for user with userId={}", userId);
         return client.findAllUserRequests(userId);
     }
 
@@ -35,12 +37,13 @@ public class ItemRequestController {
     public ResponseEntity<Object> findAllRequests(@RequestHeader(USER_HEADER_ID) Long userId,
                                                   @PositiveOrZero @RequestParam(defaultValue = "0") int from,
                                                   @Positive @RequestParam(defaultValue = "10") int size) {
+        log.info("Get all itemRequests with userId={}, from={}, size={}", userId, from, size);
         return client.findAllRequests(userId, from, size);
     }
 
     @GetMapping("/{requestId}")
-    public ResponseEntity<Object> findRequestById(@RequestHeader(USER_HEADER_ID) Long userId,
-                                                  @PathVariable Long requestId) {
+    public ResponseEntity<Object> findRequestById(@RequestHeader(USER_HEADER_ID) Long userId, @PathVariable Long requestId) {
+        log.info("Get itemRequest with userId={}, requestId={}", userId, requestId);
         return client.findRequestById(userId, requestId);
     }
 }

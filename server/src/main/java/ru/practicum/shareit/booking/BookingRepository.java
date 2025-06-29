@@ -1,5 +1,7 @@
 package ru.practicum.shareit.booking;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -21,8 +23,7 @@ public interface BookingRepository extends CrudRepository<Booking, Long> {
 
     List<Booking> findByItemIdAndEndAfter(long itemId, LocalDateTime now);
 
-    List<Booking> findByItemIdAndBookerIdAndStatusNotAndEndBefore(long itemId, long bookerId,
-                                                                  BookingStatus status, LocalDateTime now);
+    List<Booking> findByItemIdAndBookerIdAndStatusNotAndEndBefore(long itemId, long bookerId, BookingStatus status, LocalDateTime now);
 
     @Query("select b " +
             "from Booking b" +
@@ -38,7 +39,7 @@ public interface BookingRepository extends CrudRepository<Booking, Long> {
             "           where b3.item.id in ?1 and b3.start > ?2))")
     List<Booking> findLastAndNearFutureBookingsByItemIn(Collection<Long> itemIds, LocalDateTime now, Sort sort);
 
-    Iterable<Booking> findAllByBookerIdOrderByStartDesc(long bookerId);
+    Page<Booking> findAllByBookerId(long bookerId, Pageable page); //ALL
 
     @Query("select b " +
             "from Booking b " +
@@ -46,15 +47,15 @@ public interface BookingRepository extends CrudRepository<Booking, Long> {
             "where br.id = ?1 " +
             "and b.start <= ?2" +
             "and b.end >= ?2 ")
-    Iterable<Booking> findAllBookerCurrentBookings(long bookerId, LocalDateTime now, Sort sort);
+    Page<Booking> findAllBookerCurrentBookings(long bookerId, LocalDateTime now, Pageable page); //Current
 
-    Iterable<Booking> findAllByBookerIdAndEndBeforeOrderByStartDesc(long bookerId, LocalDateTime now);
+    Page<Booking> findAllByBookerIdAndEndBefore(long bookerId, LocalDateTime now, Pageable page); //Past
 
-    Iterable<Booking> findAllByBookerIdAndStartAfterOrderByStartDesc(long bookerId, LocalDateTime now);
+    Page<Booking> findAllByBookerIdAndStartAfter(long bookerId, LocalDateTime now, Pageable page); //Future
 
-    Iterable<Booking> findAllByBookerIdAndStatusOrderByStartDesc(long bookerId, BookingStatus status);
+    Page<Booking> findAllByBookerIdAndStatus(long bookerId, BookingStatus status, Pageable page); //Status
 
-    Iterable<Booking> findAllByItemOwnerIdOrderByStartDesc(long ownerId);
+    Page<Booking> findAllByItemOwnerId(long ownerId, Pageable page);
 
     @Query("select b " +
             "from Booking b " +
@@ -62,11 +63,11 @@ public interface BookingRepository extends CrudRepository<Booking, Long> {
             "where i.owner.id = ?1 " +
             "and b.start <= ?2" +
             "and b.end >= ?2 ")
-    Iterable<Booking> findAllOwnerCurrentBookings(long bookerId, LocalDateTime now, Sort sort);
+    Page<Booking> findAllOwnerCurrentBookings(long bookerId, LocalDateTime now, Pageable page); //Current
 
-    Iterable<Booking> findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(long bookerId, LocalDateTime now);
+    Page<Booking> findAllByItemOwnerIdAndEndBefore(long bookerId, LocalDateTime now, Pageable page); //Past
 
-    Iterable<Booking> findAllByItemOwnerIdAndStartAfterOrderByStartDesc(long bookerId, LocalDateTime now);
+    Page<Booking> findAllByItemOwnerIdAndStartAfter(long bookerId, LocalDateTime now, Pageable page); //Future
 
-    Iterable<Booking> findAllByItemOwnerIdAndStatusOrderByStartDesc(long bookerId, BookingStatus status);
+    Page<Booking> findAllByItemOwnerIdAndStatus(long bookerId, BookingStatus status, Pageable page); //Future
 }

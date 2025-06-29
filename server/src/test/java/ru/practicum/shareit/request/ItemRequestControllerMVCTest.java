@@ -112,9 +112,9 @@ public class ItemRequestControllerMVCTest {
                 .thenReturn(List.of(requestDto));
 
         mvc.perform(get("/requests/all")
-                .characterEncoding(StandardCharsets.UTF_8)
-                .accept(MediaType.APPLICATION_JSON)
-                .header(USER_HEADER_ID, "1")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header(USER_HEADER_ID, "1")
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", is(requestDto.getId()), Long.class))

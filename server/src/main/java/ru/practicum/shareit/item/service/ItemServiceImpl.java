@@ -12,7 +12,6 @@ import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NoRightsForUpdateException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.comments.Comment;
 import ru.practicum.shareit.item.comments.CommentDto;
@@ -48,17 +47,14 @@ public class ItemServiceImpl implements ItemService {
         if (item == null) {
             throw new NotFoundException("Предмет", itemId);
         }
-
         ItemDto itemDto;
         List<Booking> bookings;
-
         if (Objects.equals(item.getOwner().getId(), userId)) {
             Sort sort = Sort.by("start").ascending();
             bookings = bookingRepository.findLastAndNearFutureBookingsByItemIn(Set.of(itemId), LocalDateTime.now(), sort);
         } else {
             bookings = Collections.emptyList();
         }
-
         List<CommentDto> comments = CommentMapper.mapToCommentDto(commentRepository.findByItemIdInOrderByCreated(Set.of(itemId)));
         itemDto = ItemMapper.mapToItemDtoWithBookings(item, bookings, comments);
 
@@ -72,21 +68,15 @@ public class ItemServiceImpl implements ItemService {
         PageRequest page = PageRequest.of(from / size, size);
         items = itemRepository.findByOwnerIdOrderById(ownerId, page)
                 .getContent();
-
         List<ItemDto> itemsWithBookings;
-
         Sort sort = Sort.by("start").ascending();
-
         Collection<Long> itemIds = items.stream().map(Item::getId).collect(Collectors.toSet());
-
         Map<Long, List<Booking>> bookings = bookingRepository.findLastAndNearFutureBookingsByItemIn(
                         itemIds, LocalDateTime.now(), sort)
                 .stream()
                 .collect(Collectors.groupingBy(b -> b.getItem().getId()));
-
         Map<Long, List<Comment>> comments = commentRepository.findByItemIdInOrderByCreated(itemIds).stream()
                 .collect(Collectors.groupingBy(c -> c.getItem().getId()));
-
         itemsWithBookings = ItemMapper.mapToItemDtoWithBookings(items, bookings, comments);
         return itemsWithBookings;
     }
@@ -107,24 +97,11 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     @Override
     public ItemDto addItem(Long ownerId, ItemDto itemDto) {
-        if (itemDto.getName() == null || itemDto.getName().isBlank()) {
-            throw new ValidationException("Name не может быть пустым");
-        }
-
-        if (itemDto.getAvailable() == null) {
-            throw new ValidationException("Поле available обязательно");
-        }
-
-        if (itemDto.getDescription() == null || itemDto.getDescription().isBlank()) {
-            throw new ValidationException("Описание не может быть пустым");
-        }
-
         Optional<User> owner = userRepository.findById(ownerId);
         if (owner.isEmpty()) {
             throw new NotFoundException("Пользователь", ownerId);
         }
         ItemRequest itemRequest = null;
-
         if (itemDto.getRequestId() != null) {
             itemRequest = requestRepository.findById(itemDto.getRequestId())
                     .orElseThrow(NotFoundException::new);
@@ -155,7 +132,6 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException("Пользователь", ownerId);
         }
         ItemMapper.mapItemDtoToItemForUpdate(itemDto, item, newOwner.get());
-
         itemDto = ItemMapper.mapItemToItemDto(itemRepository.save(item));
         log.info("Данные предмета с идентификатором {} были обновлены", item.getId());
         return itemDto;

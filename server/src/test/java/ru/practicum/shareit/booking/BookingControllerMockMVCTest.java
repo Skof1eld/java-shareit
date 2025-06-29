@@ -131,7 +131,7 @@ class BookingControllerMockMVCTest {
 
     @Test
     void testGetBookerBookings() throws Exception {
-        when(bookingService.findAllByBookerIdAndBookingState(anyLong(), any()))
+        when(bookingService.findAllByBookerIdAndBookingState(anyLong(), any(), anyInt(), anyInt()))
                 .thenReturn(List.of(bookingDto));
 
         mvc.perform(get("/bookings")
@@ -150,7 +150,7 @@ class BookingControllerMockMVCTest {
 
     @Test
     void testGetOwnerBookings() throws Exception {
-        when(bookingService.findAllByOwnerIdAndBookingState(anyLong(), any()))
+        when(bookingService.findAllByOwnerIdAndBookingState(anyLong(), any(), anyInt(), anyInt()))
                 .thenReturn(List.of(bookingDto));
 
         mvc.perform(get("/bookings/owner")

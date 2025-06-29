@@ -15,8 +15,7 @@ import java.util.List;
 public class ItemRequestDtoWithItems extends ItemRequestDto {
     List<ItemDto> items;
 
-    public ItemRequestDtoWithItems(Long id, String text,
-                                   LocalDateTime created, List<ItemDto> items) {
+    public ItemRequestDtoWithItems(Long id, String text, LocalDateTime created, List<ItemDto> items) {
         super(id, text, created);
         this.items = items;
     }

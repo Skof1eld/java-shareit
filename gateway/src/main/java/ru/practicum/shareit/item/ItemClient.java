@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
@@ -12,6 +13,7 @@ import ru.practicum.shareit.item.comments.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import java.util.Map;
+import java.util.function.Supplier;
 
 @Service
 public class ItemClient extends BaseClient {
@@ -22,7 +24,7 @@ public class ItemClient extends BaseClient {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
-                        .requestFactory(() -> new HttpComponentsClientHttpRequestFactory())
+                        .requestFactory((Supplier<ClientHttpRequestFactory>)HttpComponentsClientHttpRequestFactory::new)
                         .build()
         );
     }
@@ -32,12 +34,19 @@ public class ItemClient extends BaseClient {
     }
 
     public ResponseEntity<Object> findItemsByOwnerId(Long userId, int from, int size) {
-        Map<String, Object> parameters = Map.of("from", from, "size", size);
+        Map<String, Object> parameters = Map.of(
+                "from", from,
+                "size", size
+        );
         return get("?from={from}&size={size}", userId, parameters);
     }
 
     public ResponseEntity<Object> searchItemsByPhrase(String searchPhrase, int from, int size) {
-        Map<String, Object> parameters = Map.of("text", searchPhrase, "from", from, "size", size);
+        Map<String, Object> parameters = Map.of(
+                "text", searchPhrase,
+                "from", from,
+                "size", size
+        );
         return get("/search?text={text}&from={from}&size={size}", null, parameters);
     }
 
